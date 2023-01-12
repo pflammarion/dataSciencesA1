@@ -1,7 +1,6 @@
-import math
 import pandas as pd
 
-def Standardisation(InputVal):
-    Average = pd.mean(InputVal)
-    StandardDeviation = pd.std(InputVal)
-    return (InputVal-Average)/StandardDeviation
+def standardisation(inputVal):
+    average = inputVal.mean()
+    standardDeviation = inputVal.std()
+    return (inputVal-average)/standardDeviation
