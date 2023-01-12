@@ -15,15 +15,28 @@ scaler.fit(data[columns_to_standardize])
 data[columns_to_standardize] = scaler.transform(data[columns_to_standardize])
 
 # Calculate the variance matrix
-variance_matrix = data[columns_to_standardize].var()
+variance_matrix = data[columns_to_standardize].cov()
 
-
-print(data)
-print(variance_matrix)
-
-# Diagonalize the variance matrix
-#eigenvalues, eigenvectors = np.linalg.eig(variance_matrix)
+#Diagonalize the variance matrix
+eigenvalues, eigenvectors = np.linalg.eig(variance_matrix)
 
 # Find the principal component loading vectors
-#loading_vectors = eigenvectors / eigenvalues
+loading_vectors = eigenvectors / eigenvalues
+
+print('\nStandardized\n')
+print(data)
+print('\nVariance\n')
+print(variance_matrix)
+
+print('\neigenvalues\n')
+print(eigenvalues)
+
+print('\neigenvectors\n')
+print(eigenvectors)
+
+print('\nloading_vectors\n')
+print(loading_vectors)
+
+
+
 
