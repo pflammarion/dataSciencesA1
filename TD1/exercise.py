@@ -1,10 +1,10 @@
 import pandas as pd
 
 
-def standardisation(inputVal):
-    average = inputVal.mean()
-    standardDeviation = inputVal.std()
-    return (inputVal - average) / standardDeviation
+def standardisation(input_val):
+    average = input_val.mean()
+    standard_deviation = input_val.std()
+    return (input_val - average) / standard_deviation
 
 
 # Load the dataset
