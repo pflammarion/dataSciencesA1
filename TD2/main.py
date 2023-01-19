@@ -6,6 +6,7 @@ import statsmodels.formula.api as smf
 import scipy.stats as stats
 from scipy.stats import gaussian_kde
 import statsmodels.formula.api as smf
+import numpy as np
 
 # Load the dataset
 oz = pd.read_csv("ozone.csv", delimiter=" ")
@@ -87,15 +88,28 @@ if p_value < alpha:
 else:
     print("Fail to reject the null hypothesis. There is no relationship between Ne12 and maxO3.")
 #ex4
+#ex3
 
 oz_regsimple = smf.ols(formula='maxO3 ~ Ne12', data=oz).fit()
+
+print('Summary report of the fitting simple\n',oz_regsimple.summary())
+
+
+#ex4
+
 print('\nConfidence interval for the parameter β1\n', oz_regsimple.conf_int(alpha=0.1))
 
 #ex5
+print('Summary report of the fitting simple\n',oz_regsimple.summary())
 
-oz_regmult = smf.ols(formula='maxO3 ~ Ne12', data=oz).fit()
-print('\nSummary report of the fitting\n', oz_regmult.summary())
-## n'est pas la bonne commande => reg simple
+#ex6
+
+oz_regmult = smf.ols(formula='maxO3 ~ Ne12 + maxO3v', data=oz).fit()
+print('\nSummary report of the fitting multiple\n', oz_regmult.summary())
+
+#ex7
+
+
 
 
 
