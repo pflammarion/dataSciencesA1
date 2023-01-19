@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import statsmodels.formula.api as smf
 import scipy.stats as stats
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 # uploading dataset to python
 
@@ -53,3 +55,61 @@ print('\nThe coefficients estimates are:\n', coef)
 
 
 print('\nConfidence interval for the parameter β1\n', df_regsimple.conf_int(alpha=0.05))
+
+print('Summary report of the fitting simple\n',df_regsimple.summary())
+
+# 2.3 Principal Component Analysis (PCA)
+
+
+# Select only the desired columns
+data = df[["num_comments", "num_shares", "num_likes", "num_loves"]]
+
+print('Variance of each variables:\n', data.var())
+
+# Standardize the data
+scaler = StandardScaler()
+data_scaled = scaler.fit_transform(data)
+
+# Create the PCA object
+pca = PCA(n_components=2)
+
+# Fit the PCA model to the data
+pca.fit(data_scaled)
+
+# Get the principal component loading vectors
+loading_vectors = pca.components_
+
+print("\nLoading vectors: \n", loading_vectors)
+
+# Get the explained variance ratio of each principal component
+explained_variance = pca.explained_variance_ratio_
+print('\nPVE: \n', explained_variance)
+# Get the cumulative explained variance ratio
+cumulative_explained_variance = [explained_variance[:n+1].sum() for n in range(len(explained_variance))]
+
+# Plot the explained variance and cumulative explained variance
+plt.plot(explained_variance, label='PVE by each component')
+plt.plot(cumulative_explained_variance, label='Cumulative PVE')
+plt.legend()
+plt.show()
+
+
+
+# Get the principal component scores
+scores = pca.transform(data_scaled)
+
+# Create the biplot
+plt.scatter(scores[:, 0], scores[:, 1], s=5)
+
+# Add the loading vectors to the plot
+plt.quiver(np.zeros(2), np.zeros(2), loading_vectors[:, 0], loading_vectors[:, 1], angles='xy', scale_units='xy', scale=1)
+
+# Add the correlation circle
+circle = plt.Circle((0, 0), 1, color='gray', fill=False)
+plt.gca().add_artist(circle)
+
+# Add labels and show the plot
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+plt.show()
+
