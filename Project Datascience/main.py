@@ -3,6 +3,9 @@ from pandas.plotting import scatter_matrix
 import matplotlib.pyplot as plt
 import numpy as np
 import statsmodels.formula.api as smf
+from itertools import combinations
+from sklearn.linear_model import LinearRegression
+from sklearn.feature_selection import RFE
 import scipy.stats as stats
 
 #uploading dataset to python
@@ -98,26 +101,65 @@ plt.show()
 plt.scatter(counts_num_a, values_num_a, c='blue', label="angrys")
 plt.show()
 
-
-# 2.4 Linear Regression
-
-## Perform an initial analysis of the variable num_shares based on the others
-##by calculating the correlation coefficient between num_shares and each of the other variables ex-
-##cept status_type, status_published and num_reactions. Which one is the most correlated with
-##num_shares ?
-
-
-corr_matrix = df.corr(numeric_only=True)
-
-print('\nCorr matrix\n', corr_matrix)
-
-correlation = corr_matrix['num_shares']
-
-correlation = correlation.sort_values(ascending=False)
-
-print('\nVariable which is correlated the most with the ozone content num_shares\n\n', correlation)
-
-
 df_regsimple = smf.ols(formula='num_shares ~ num_loves', data=df).fit()
 coef = df_regsimple.params
-print('\nThe coefficients estimates are:\n', coef)
+
+conf_int = df_regsimple.conf_int(alpha=0.05)
+
+print(conf_int)
+if (conf_int.loc['num_loves'][0] < 0) & (conf_int.loc['num_loves'][1] > 0):
+    print("The coefficient is not significantly non-zero, there is no significant impact of the predictor on the number of shares")
+else:
+    print("The coefficient is significantly non-zero, there is an impact of the predictor on the number of shares")
+
+print(df_regsimple.summary())
+
+
+#Multiple linear regression
+df.pop('status_type')
+df.pop('status_published')
+df.pop('status_id')
+# create the X and y arrays
+
+X = df.drop(['num_shares'], axis=1)
+y = df['num_shares']
+
+# create lists to store the R^2 values and feature lists for each number of features
+r2_scores = []
+feature_lists = []
+
+# perform subset selection for each possible number of features
+for i in range(1, 7):
+    comb = combinations(X.columns, i)
+    for feature_list in comb:
+        feature_list = "+".join(feature_list)
+        formula = 'num_shares ~' + feature_list
+        model = smf.ols(formula=formula, data=df).fit()
+        r2_scores.append(model.rsquared_adj)
+        feature_lists.append(feature_list)
+
+# find the index of the best model (the one with the highest R^2 value)
+best_index = r2_scores.index(max(r2_scores))
+best_num_features = len(feature_lists[best_index])
+best_feature_list = feature_lists[best_index]
+
+# plot the R^2 values versus the number of features
+
+num_features = [len(fl.split("+")) for fl in feature_lists]
+
+r2_dict = {}
+for i, r2 in zip(num_features, r2_scores):
+    if i not in r2_dict:
+        r2_dict[i] = []
+    r2_dict[i].append(r2)
+
+# plot the R^2 values as a bar plot
+plt.bar(r2_dict.keys(), [sum(r2_dict[i])/len(r2_dict[i]) for i in r2_dict.keys()])
+plt.xlabel('Number of Features')
+plt.ylabel('Average R^2')
+plt.show()
+
+# print the best model
+print("The best model has", best_num_features, "features and an R^2 value of", max(r2_scores))
+print("The features in the best model are:", best_feature_list)
+
