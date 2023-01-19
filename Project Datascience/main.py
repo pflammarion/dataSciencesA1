@@ -47,7 +47,3 @@ plt.show()
 
 df[columns2].boxplot()
 plt.show()
-
-
-
-
