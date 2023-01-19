@@ -109,8 +109,9 @@ print('\nSummary report of the fitting multiple\n', oz_regmult.summary())
 
 #ex7
 
-
-
+new_data = pd.DataFrame({'Ne12': 6, 'maxO3v': 80}, index=[0])
+print('\n\nPrediction simple maxO3 : \n', oz_regsimple.predict(new_data))
+print('\n\nPrediction multiple maxO3 : \n', oz_regmult.predict(new_data))
 
 
 
