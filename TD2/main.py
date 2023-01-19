@@ -2,6 +2,8 @@ import pandas as pd
 from pandas.plotting import scatter_matrix
 import matplotlib.pyplot as plt
 import numpy as np
+import statsmodels.formula.api as smf
+import scipy.stats as stats
 from scipy.stats import gaussian_kde
 
 # Load the dataset
@@ -31,10 +33,10 @@ print('\nVariable which is correlated the most with the ozone content maxO3\n\n'
 
 #ex3
 
-import statsmodels.api as sm
-lm = sm.OLS.from_formula('maxO3 ~ Ne12', oz)
-oz_regsimple = lm. fit ()
-print (oz_regsimple.summary())
+#import statsmodels.api as sm
+#lm = sm.OLS.from_formula('maxO3 ~ Ne12', oz)
+#oz_regsimple = lm. fit ()
+#print (oz_regsimple.summary())
 
 plt.scatter(oz.Ne12, oz.maxO3)
 
@@ -49,3 +51,39 @@ def abline(slope, intercept):
     plt.plot(x_vals, y_vals, '--')
 
 abline(slope, intercept)
+
+#ex4
+
+oz_regsimple = smf.ols(formula='maxO3 ~ Ne12', data=oz).fit()
+print('\nConfidence interval for the parameter β1\n', oz_regsimple.conf_int(alpha=0.1))
+
+#ex5
+
+oz_regmult_all = smf.ols(formula='maxO3 ~ Ne12 + maxO3v + T12', data=oz).fit()
+print('\nSummary report of the fitting\n', oz_regmult_all.summary())
+
+#ex6
+
+oz_regmult = smf.ols(formula='maxO3 ~ Ne12 + maxO3v', data=oz).fit()
+print('\nSummary report of the fitting\n', oz_regmult.summary())
+
+#H0: The slope of the regression line is equal to zero.
+#To perform the zero slope hypothesis test, you can use the f_regression function
+# from the sklearn.feature_selection module.
+# This function returns the F-value and p-value for each predictor in the model.
+# The null hypothesis for this test is that the slope of the predictor is equal to zero,
+# and the alternative hypothesis is that the slope is not equal to zero.
+
+# calculate the t-value and p-value for the predictor Ne12
+t_value, p_value = stats.ttest_1samp(oz.Ne12, 0)
+
+# set the significance level (alpha)
+alpha = 0.05
+
+# compare the p-value to the significance level
+if p_value < alpha:
+    print("Reject the null hypothesis. There is a relationship between Ne12 and maxO3.")
+else:
+    print("Fail to reject the null hypothesis. There is no relationship between Ne12 and maxO3.")
+
+
