@@ -163,3 +163,23 @@ plt.show()
 print("The best model has", best_num_features, "features and an R^2 value of", max(r2_scores))
 print("The features in the best model are:", best_feature_list)
 
+model = smf.ols(formula='num_shares ~ num_loves + num_wows + num_hahas + num_sads + num_comments', data=df).fit()
+# obtain the coefficient estimates
+coef = model.params
+print(coef)
+r_squared = model.rsquared
+print(r_squared)
+
+# obtain the t-statistics and p-values for each coefficient
+tvalues = model.tvalues[1:]
+pvalues = model.pvalues[1:]
+
+# set the significance level
+alpha = 0.05
+
+# compare the p-values to the significance level
+for i, p in enumerate(pvalues):
+    if p < alpha:
+        print(f'Coefficient {model.params.index[i+1]} is statistically significant')
+    else:
+        print(f'Coefficient {model.params.index[i+1]} is not statistically significant')
