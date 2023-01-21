@@ -2,6 +2,7 @@ from itertools import combinations
 from statistics import LinearRegression
 
 import pandas as pd
+import seaborn as sns
 from pandas.plotting import scatter_matrix
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,6 +26,12 @@ correlation = corr_matrix['num_shares']
 
 correlation = correlation.sort_values(ascending=False)
 
+plt.figure(figsize=(13, 6))
+sns.heatmap(corr_matrix, vmax=1, annot=True, linewidths=.5)
+plt.xticks(rotation=30, horizontalalignment='right')
+plt.title("Correlation matrix")
+plt.show()
+
 print('\nVariable which is correlated the most with the ozone content num_shares\n\n', correlation)
 
 df_regsimple = smf.ols(formula='num_shares ~ num_loves', data=df).fit()
@@ -39,7 +46,6 @@ print('\nConfidence interval for the parameter β1\n', conf_int)
 
 #3
 
-coef = df_regsimple.params['num_loves']
 se = df_regsimple.bse['num_loves']
 
 t_value = coef / se
