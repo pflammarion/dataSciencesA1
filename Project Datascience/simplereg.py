@@ -55,3 +55,17 @@ else:
 
 #4
 print('\n summary() of simple linear regression: \n', df_regsimple.summary())
+
+
+
+# extract intercept b and slope m
+b, m = df_regsimple.params
+plt.scatter(df['num_loves'], df['num_shares'])
+
+# plot y = m*x + b
+
+plt.axline(xy1=(0, b), linestyle='--', color='red', slope=m)
+plt.title('Regression simple')
+plt.xlabel('Num_loves')
+plt.ylabel('Num_shares')
+plt.show()
