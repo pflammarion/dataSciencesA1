@@ -1,12 +1,7 @@
-from itertools import combinations
-from statistics import LinearRegression
-
 import pandas as pd
-from pandas.plotting import scatter_matrix
+import plotly.express as px
 import matplotlib.pyplot as plt
 import numpy as np
-import statsmodels.formula.api as smf
-import scipy.stats as stats
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
@@ -49,11 +44,18 @@ plt.xlabel("Principal component")
 plt.title("Scree plot 4 components")
 plt.show()
 
+plt.bar(range(len(explained_variance)), explained_variance)
+plt.title("Explained Variance")
+plt.ylabel("Percentage of variance explained (PVE)")
+plt.xlabel("Principal component")
+plt.show()
+
+
 pca = PCA(n_components=2)
 pca.fit(data_scaled)
 
 loadings = pca.components_.T
-print("\nLoadings vectors associated to each principal component: \n", loadings)
+print("\nLoadings vectors associated to the two first principal component:  \n", loadings)
 
 explained_variance = np.round(pca.explained_variance_ratio_*100, decimals=1)
 cumulative_explained_variance = [explained_variance[:n + 1].sum() for n in range(len(explained_variance))]
@@ -82,4 +84,23 @@ plt.show()
 scores = pca.transform(data_scaled)
 
 plt.scatter(scores[:, 0], scores[:, 1], s=5)
+plt.title("Live, PCA")
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.show()
+
+fig, axis = plt.subplots(figsize=(7, 7))
+axis.set_xlim(-1, 1)
+axis.set_ylim(-1, 1)
+plt.plot([-1, 1], [0, 0], color="silver", linestyle="-", linewidth=1)
+plt.plot([0, 0], [-1, 1], color="silver", linestyle="-", linewidth=1)
+for j in range(0, 4):
+    plt.arrow(0, 0, loadings[j, 0], loadings[j, 1],
+              head_width=0.02, width=0.001, color="red")
+    plt.annotate(data_scaled_df.columns[j], (loadings[j, 0], loadings[j, 1]))
+cercle = plt.Circle((0, 0), 1, color='blue', fill=False)
+axis.add_artist(cercle)
+plt.scatter(scores[:, 0], scores[:, 1], s=5)
+plt.xlabel("First Principal Component")
+plt.ylabel("Second Principal Component")
 plt.show()
