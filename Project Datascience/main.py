@@ -72,7 +72,7 @@ scaler = StandardScaler()
 data_scaled = scaler.fit_transform(data)
 
 # Create the PCA object
-pca = PCA()
+pca = PCA(n_components=4)
 
 # Fit the PCA model to the data
 pca.fit(data_scaled)
@@ -144,7 +144,7 @@ plt.plot([0, 0], [-1, 1], color="silver", linestyle="-", linewidth=1)
 for j in range(0, 4):
     plt.arrow(0, 0, loadings[j, 0], loadings[j, 1],
               head_width=0.02, width=0.001, color="red")
-    plt.annotate(df.columns[j], (loadings[j, 0], loadings[j, 1]))
+    plt.annotate(data.columns[j], (loadings[j, 0], loadings[j, 1]))
 cercle = plt.Circle((0, 0), 1, color='blue', fill=False)
 axis.add_artist(cercle)
 plt.show()
