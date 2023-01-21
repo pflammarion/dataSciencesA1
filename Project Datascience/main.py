@@ -79,7 +79,7 @@ pca.fit(data_scaled)
 print('PCA', pca)
 
 # Get the principal component loading vectors
-#loading_vectors = pca.components_
+#loading_vectors = pca.py.components_
 
 #print("\nLoading vectors: \n", loading_vectors)
 
@@ -133,10 +133,17 @@ plt.ylabel("percentage of variance explained (PVE)")
 plt.xlabel("Principal component")
 plt.title("Scree plot")
 
+##cercle plot
+
+pca = PCA(n_components=2)
+
+# Fit the PCA model to the data
+pca.fit(data_scaled)
 
 loadings = pca.components_.T
 print('loading\n', loadings)
-fig, axis = plt.subplots(figsize=(5, 5))
+
+fig, axis = plt.subplots(figsize=(7, 7))
 axis.set_xlim(-1, 1)
 axis.set_ylim(-1, 1)
 plt.plot([-1, 1], [0, 0], color="silver", linestyle="-", linewidth=1)
@@ -147,4 +154,6 @@ for j in range(0, 4):
     plt.annotate(data.columns[j], (loadings[j, 0], loadings[j, 1]))
 cercle = plt.Circle((0, 0), 1, color='blue', fill=False)
 axis.add_artist(cercle)
+plt.xlabel("First Principal Component")
+plt.ylabel("Second Principal Component")
 plt.show()
