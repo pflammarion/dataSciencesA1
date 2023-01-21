@@ -15,7 +15,6 @@ from sklearn.preprocessing import StandardScaler
 
 df = pd.read_csv("Live_20210128_clean.csv", delimiter=",")
 #filter dataframe
-df.drop('status_type', inplace=True, axis=1)
 df.drop('status_published', inplace=True, axis=1)
 df.drop('num_reactions', inplace=True, axis=1)
 
@@ -54,24 +53,28 @@ t_value = coef / se
 p_value = (1 - stats.t.cdf(abs(t_value), df_regsimple.df_resid)) * 2
 
 # check p-value
-if p_value < 0.05:
-    print("\nThe coefficient is significantly non-zero, there is an impact of the predictor on the number of shares")
-else:
-    print("\nThe coefficient is not significantly non-zero, there is no significant impact of the predictor on the number of shares")
 
 #4
 print('\n summary() of simple linear regression: \n', df_regsimple.summary())
 
-
+df1 = df[df['status_type'] == 'video']
+df2 = df[df['status_type'] == 'photo']
 
 # extract intercept b and slope m
+plt.scatter(df1['num_loves'], df1['num_shares'], label='Video')
+plt.scatter(df2['num_loves'], df2['num_shares'], color='purple', label='Photo')
+
+
 b, m = df_regsimple.params
-plt.scatter(df['num_loves'], df['num_shares'])
 
 # plot y = m*x + b
 
-plt.axline(xy1=(0, b), linestyle='--', color='red', slope=m)
+plt.axline(xy1=(0, b), linestyle='--', color='red', slope=m, label=f'$y = {m:.1f}x {b:+.1f}$')
+#plt.axline(xy1=(0, b), color='blue', slope=conf_int[0]['num_loves'])
+#plt.axline(xy1=(0, b), color='purple', slope=conf_int[1]['num_loves'])
+plt.legend()
 plt.title('Regression simple')
 plt.xlabel('Num_loves')
 plt.ylabel('Num_shares')
 plt.show()
+
