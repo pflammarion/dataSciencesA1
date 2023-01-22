@@ -83,10 +83,9 @@ print("The best model has", best_num_features, "features and an R^2 value of", m
 print("The features in the best model are:", best_feature_list)
 
 
-
 model = smf.ols(formula='num_shares ~ num_loves + num_wows', data=df).fit()
 df['num_shares_pred'] = model.predict(df[['num_loves', 'num_wows']])
-fig = px.scatter_3d(model, x='num_loves', y='num_wows', z='num_shares_pred',
+fig = px.scatter_3d(df, x='num_loves', y='num_wows', z='num_shares_pred',
               color='num_shares_pred',size='num_shares_pred',title="Multiple Linear Regression")
 fig.show()
 model = smf.ols(formula='num_shares ~ num_loves + num_likes', data=df).fit()
