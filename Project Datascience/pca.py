@@ -4,8 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from pandas.plotting import scatter_matrix
 
 df = pd.read_csv("Live_20210128_clean.csv", delimiter=",")
+scatter_matrix(df, alpha=0.2, figsize=(20, 20), diagonal='kde', color="red")
+plt.show()
 #select only 4 col
 data = df[["num_comments", "num_shares", "num_likes", "num_loves"]]
 variance = data.var()
