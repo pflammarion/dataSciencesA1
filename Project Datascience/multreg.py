@@ -43,6 +43,7 @@ X = df.drop(['num_shares'], axis=1)
 y = df['num_shares']
 
 # create lists to store the R^2 values and feature lists for each number of features
+r2r = []
 r2_scores = []
 feature_lists = []
 
@@ -53,6 +54,7 @@ for i in range(1, 7):
         feature_list = "+".join(feature_list)
         formula = 'num_shares ~' + feature_list
         model = smf.ols(formula=formula, data=df).fit()
+        r2r.append(model.rsquared)
         r2_scores.append(model.rsquared_adj)
         feature_lists.append(feature_list)
 
@@ -71,9 +73,15 @@ for i, r2 in zip(num_features, r2_scores):
         r2_dict[i] = []
     r2_dict[i].append(r2)
 
+r2r_dict = {}
+for i, r2 in zip(num_features, r2r):
+    if i not in r2r_dict:
+        r2r_dict[i] = []
+    r2r_dict[i].append(r2)
+
 # plot the R^2 values as a bar plot
 plt.plot(r2_dict.keys(), [sum(r2_dict[i])/len(r2_dict[i]) for i in r2_dict.keys()], c='red')
-plt.bar(r2_dict.keys(), [sum(r2_dict[i])/len(r2_dict[i]) for i in r2_dict.keys()])
+plt.scatter(r2r_dict.keys(), [sum(r2r_dict[i])/len(r2r_dict[i]) for i in r2r_dict.keys()])
 plt.xlabel('Number of Features')
 plt.ylabel('Average R^2')
 plt.show()
@@ -84,28 +92,21 @@ print("The features in the best model are:", best_feature_list)
 
 
 model = smf.ols(formula='num_shares ~ num_loves + num_wows', data=df).fit()
+print(model.params)
 df['num_shares_pred'] = model.predict(df[['num_loves', 'num_wows']])
 fig = px.scatter_3d(df, x='num_loves', y='num_wows', z='num_shares_pred',
               color='num_shares_pred',size='num_shares_pred',title="Multiple Linear Regression")
 fig.show()
+
 model = smf.ols(formula='num_shares ~ num_loves + num_likes', data=df).fit()
 df['num_shares_pred'] = model.predict(df[['num_loves', 'num_likes']])
 fig = px.scatter_3d(df, x='num_loves', y='num_likes', z='num_shares_pred',
               color='num_shares_pred',size='num_shares_pred',title="Multiple Linear Regression")
 fig.show()
+
 model = smf.ols(formula='num_shares ~ num_loves + num_comments', data=df).fit()
 df['num_shares_pred'] = model.predict(df[['num_loves', 'num_comments']])
 fig = px.scatter_3d(df, x='num_loves', y='num_comments', z='num_shares_pred',
-              color='num_shares_pred',size='num_shares_pred',title="Multiple Linear Regression")
-fig.show()
-model = smf.ols(formula='num_shares ~ num_loves + num_hahas', data=df).fit()
-df['num_shares_pred'] = model.predict(df[['num_loves', 'num_hahas']])
-fig = px.scatter_3d(df, x='num_loves', y='num_hahas', z='num_shares_pred',
-              color='num_shares_pred',size='num_shares_pred',title="Multiple Linear Regression")
-fig.show()
-model = smf.ols(formula='num_shares ~ num_loves + num_sads', data=df).fit()
-df['num_shares_pred'] = model.predict(df[['num_loves', 'num_sads']])
-fig = px.scatter_3d(df, x='num_loves', y='num_sads', z='num_shares_pred',
               color='num_shares_pred',size='num_shares_pred',title="Multiple Linear Regression")
 fig.show()
 
